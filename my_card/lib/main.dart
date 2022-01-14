@@ -12,19 +12,29 @@ class MyApp extends StatelessWidget {
         backgroundColor: Colors.teal,
         body: SafeArea(
           child: Column(
-            children: const [
-              CircleAvatar(
+            children: [
+              const CircleAvatar(
                 radius: 50.0,
                 backgroundColor: Colors.white,
                 foregroundImage: AssetImage('images/userMale.png')
               ),
-              Text(
+              const Text(
                 'Alexandr Kurylenko',
                 style: TextStyle(
                   fontFamily: 'Pacifico',
-                  fontSize: 30.0,
+                  fontSize: 34.0,
                   fontWeight: FontWeight.bold,
                   color: Colors.white
+                ),
+              ),
+              Text(
+                'iOS/Flutter DEVELOPER',
+                style: TextStyle(
+                    fontFamily: 'SourceSansPro',
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.teal.shade100,
+                    letterSpacing: 2.5,
                 ),
               ),
             ],
