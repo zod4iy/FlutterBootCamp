@@ -35,52 +35,38 @@ class MyApp extends StatelessWidget {
                   letterSpacing: 2.5,
                 ),
               ),
-              Container(
-                color: Colors.white,
+              Card(
                 margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
-                padding: EdgeInsets.all(10.0),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.phone,
-                      color: Colors.teal,
-                    ),
-                    SizedBox(
-                      width: 20.0,
-                    ),
-                    Text(
-                      '097-123-45-67',
+                child: ListTile(
+                  leading: Icon(
+                    Icons.phone,
+                    color: Colors.teal,
+                  ),
+                  title: Text(
+                    '097-123-45-67',
                       style: TextStyle(
-                        color: Colors.teal.shade900,
-                        fontSize: 20.0,
-                        fontFamily: 'SourceSansPro',
-                      ),
+                      color: Colors.teal.shade900,
+                      fontSize: 20.0,
+                      fontFamily: 'SourceSansPro',
                     ),
-                  ],
+                  ),
                 ),
               ),
-              Container(
-                color: Colors.white,
+              Card(
                 margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
-                padding: EdgeInsets.all(10.0),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.email,
-                      color: Colors.teal,
+                child: ListTile(
+                  leading: Icon(
+                    Icons.email,
+                    color: Colors.teal,
+                  ),
+                  title: Text(
+                    'example@google.com',
+                    style: TextStyle(
+                      color: Colors.teal.shade900,
+                      fontSize: 20.0,
+                      fontFamily: 'SourceSansPro',
                     ),
-                    SizedBox(
-                      width: 20.0,
-                    ),
-                    Text(
-                      'example@google.com',
-                      style: TextStyle(
-                        color: Colors.teal.shade900,
-                        fontSize: 20.0,
-                        fontFamily: 'SourceSansPro',
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ],
