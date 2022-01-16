@@ -36,8 +36,13 @@ class _BallState extends State<Ball> {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        margin: EdgeInsets.all(16.0),
-        child: Image.asset('images/ball1.png'),
+        margin: const EdgeInsets.all(16.0),
+        child: TextButton(
+          onPressed: () {
+            print('I got clicked');
+          },
+          child: Image.asset('images/ball1.png'),
+        ),
       ),
     );
   }
