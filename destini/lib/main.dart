@@ -19,6 +19,12 @@ class StoryPage extends StatefulWidget {
 }
 
 class _StoryPageState extends State<StoryPage> {
+  void _nextStoryFor({required int choice}) {
+    setState(() {
+      storyBrain.nextStory(choiceNumber: choice);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,9 +64,7 @@ class _StoryPageState extends State<StoryPage> {
                   ),
                   onPressed: () {
                     //Choice 1 made by user.
-                    setState(() {
-                      storyBrain.nextStory(choiceNumber: 1);
-                    });
+                    _nextStoryFor(choice: 1);
                   },
                   child: Text(
                     storyBrain.getChoice1(),
@@ -84,9 +88,7 @@ class _StoryPageState extends State<StoryPage> {
                     ),
                     onPressed: () {
                       //Choice 2 made by user.
-                      setState(() {
-                        storyBrain.nextStory(choiceNumber: 2);
-                      });
+                      _nextStoryFor(choice: 2);
                     },
                     child: Text(
                       storyBrain.getChoice2(),
@@ -101,6 +103,4 @@ class _StoryPageState extends State<StoryPage> {
     );
   }
 }
-
-//TODO: Step 29 - Run the app and test it against the Story Outline to make sure you've completed all the steps. The code for the completed app can be found here: https://github.com/londonappbrewery/destini-challenge-completed/
 
