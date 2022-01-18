@@ -58,7 +58,9 @@ class _StoryPageState extends State<StoryPage> {
                   ),
                   onPressed: () {
                     //Choice 1 made by user.
-                    storyBrain.nextStory(choiceNumber: 1);
+                    setState(() {
+                      storyBrain.nextStory(choiceNumber: 1);
+                    });
                   },
                   child: Text(
                     storyBrain.getChoice1(),
@@ -82,7 +84,9 @@ class _StoryPageState extends State<StoryPage> {
                   ),
                   onPressed: () {
                     //Choice 2 made by user.
-                    storyBrain.nextStory(choiceNumber: 2);
+                    setState(() {
+                      storyBrain.nextStory(choiceNumber: 2);
+                    });
                   },
                   child: Text(
                     storyBrain.getChoice2(),
