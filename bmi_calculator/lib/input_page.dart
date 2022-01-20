@@ -4,9 +4,12 @@ import 'icon_content.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'constants.dart';
 
-enum Gender {
-  male,
-  female
+enum Gender { male, female }
+enum ActionType {
+  increaseWeight,
+  decreaseWeight,
+  increaseAge,
+  decreaseAge,
 }
 
 class InputPage extends StatefulWidget {
@@ -19,6 +22,22 @@ class InputPage extends StatefulWidget {
 class _InputPageState extends State<InputPage> {
   Gender? selectedGender;
   int height = 180;
+  int weight = 60;
+  int age = 30;
+
+  void _updateValueFor({required ActionType action}) {
+    setState(() {
+      if (action == ActionType.increaseWeight) {
+        weight++;
+      } else if (action == ActionType.decreaseWeight && weight > 0) {
+        weight--;
+      } else if (action == ActionType.increaseAge) {
+        age++;
+      } else if (action == ActionType.decreaseAge && age > 0) {
+        age--;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +59,8 @@ class _InputPageState extends State<InputPage> {
                       });
                     },
                     cardColor: selectedGender == Gender.male
-                        ? kActiveCardColor : kInactiveCardColor,
+                        ? kActiveCardColor
+                        : kInactiveCardColor,
                     cardChild: const IconContent(
                       icon: FontAwesomeIcons.mars,
                       text: 'MALE',
@@ -55,7 +75,8 @@ class _InputPageState extends State<InputPage> {
                       });
                     },
                     cardColor: selectedGender == Gender.female
-                        ? kActiveCardColor : kInactiveCardColor,
+                        ? kActiveCardColor
+                        : kInactiveCardColor,
                     cardChild: const IconContent(
                       icon: FontAwesomeIcons.venus,
                       text: 'FEMALE',
@@ -83,13 +104,14 @@ class _InputPageState extends State<InputPage> {
                   ),
                   SliderTheme(
                     data: SliderTheme.of(context).copyWith(
-                      thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 15.0),
-                      overlayShape: const RoundSliderOverlayShape(overlayRadius: 30.0),
-                      thumbColor: const Color(0xFFEB1555),
-                      overlayColor: const Color(0x29EB1555),
-                      activeTrackColor: Colors.white,
-                      inactiveTrackColor: const Color(0xFF8D8E98)
-                    ),
+                        thumbShape: const RoundSliderThumbShape(
+                            enabledThumbRadius: 15.0),
+                        overlayShape:
+                            const RoundSliderOverlayShape(overlayRadius: 30.0),
+                        thumbColor: const Color(0xFFEB1555),
+                        overlayColor: const Color(0x29EB1555),
+                        activeTrackColor: Colors.white,
+                        inactiveTrackColor: const Color(0xFF8D8E98)),
                     child: Slider(
                       value: height.toDouble(),
                       min: 120.0,
@@ -111,11 +133,61 @@ class _InputPageState extends State<InputPage> {
                 Expanded(
                   child: ReusableCard(
                     cardColor: kActiveCardColor,
+                    cardChild: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('WEIGHT', style: kLabelTextStyle),
+                        Text(weight.toString(), style: kNumbersTextStyle),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            RoundIconButton(
+                              onPressed: () {
+                                _updateValueFor(action: ActionType.decreaseWeight);
+                              },
+                              icon: FontAwesomeIcons.minus,
+                            ),
+                            SizedBox(width: 10.0),
+                            RoundIconButton(
+                              onPressed: () {
+                                _updateValueFor(action: ActionType.increaseWeight);
+                              },
+                              icon: FontAwesomeIcons.plus,
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 Expanded(
                   child: ReusableCard(
                     cardColor: kActiveCardColor,
+                    cardChild: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('AGE', style: kLabelTextStyle),
+                        Text(age.toString(), style: kNumbersTextStyle),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            RoundIconButton(
+                              onPressed: () {
+                                _updateValueFor(action: ActionType.decreaseAge);
+                              },
+                              icon: FontAwesomeIcons.minus,
+                            ),
+                            SizedBox(width: 10.0),
+                            RoundIconButton(
+                              onPressed: () {
+                                _updateValueFor(action: ActionType.increaseAge);
+                              },
+                              icon: FontAwesomeIcons.plus,
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -129,6 +201,25 @@ class _InputPageState extends State<InputPage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class RoundIconButton extends StatelessWidget {
+  const RoundIconButton({Key? key, required this.icon, required this.onPressed})
+      : super(key: key);
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return RawMaterialButton(
+      child: Icon(icon, color: Colors.white),
+      onPressed: onPressed,
+      elevation: 6.0,
+      fillColor: const Color(0xFF4C4F5E),
+      shape: const CircleBorder(),
+      constraints: const BoxConstraints.tightFor(width: 56.0, height: 56.0),
     );
   }
 }
