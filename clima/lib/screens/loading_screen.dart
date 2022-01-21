@@ -1,7 +1,7 @@
+import 'package:clima/screens/location_screen.dart';
 import 'package:clima/services/location.dart';
 import 'package:flutter/material.dart';
 import 'package:clima/services/networking.dart';
-import 'dart:convert';
 
 class LoadingScreen extends StatefulWidget {
   @override
@@ -15,16 +15,23 @@ class _LoadingScreenState extends State<LoadingScreen> {
   void initState() {
     super.initState();
 
-    _getLocationData();
+    _getLocationData(completion: (weatherData) {
+      _presentLocationScreen(weatherData: weatherData);
+    });
   }
 
-  void _getLocationData() async {
+  void _getLocationData({required void Function(dynamic) completion}) async {
     ApiWeatherService weatherService = ApiWeatherService();
 
     var weatherData = await weatherService.fetchWeatherData();
 
-    var cityName = weatherData['name'];
-    print(cityName);
+    completion(weatherData);
+    // var cityName = weatherData['name'];
+    // print(cityName);
+  }
+
+  void _presentLocationScreen({required dynamic weatherData }) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => LocationScreen()));
   }
 
   @override
