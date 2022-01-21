@@ -27,12 +27,17 @@ class _LoadingScreenState extends State<LoadingScreen> {
     var weatherData = await weatherService.fetchWeatherData();
 
     completion(weatherData);
-    // var cityName = weatherData['name'];
-    // print(cityName);
   }
 
-  void _presentLocationScreen({required dynamic weatherData }) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => LocationScreen()));
+  void _presentLocationScreen({required dynamic weatherData}) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LocationScreen(
+          locationData: weatherData,
+        ),
+      ),
+    );
   }
 
   @override
