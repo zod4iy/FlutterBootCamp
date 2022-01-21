@@ -34,7 +34,7 @@ class ApiWeatherService extends BasicApiService {
       String long = location.longitude.toString();
       String lat = location.latitude.toString();
 
-      url = 'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$long&appid=$kApiKey';
+      url = 'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$long&appid=$kApiKey&units=metric';
       return performGetRequest();
     } catch (e){
       print(e);
