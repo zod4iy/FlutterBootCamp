@@ -2,14 +2,12 @@ import 'package:clima/services/location.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-const String kApiKey = '74f903ea70161f3903e0a7dae7464d1e';
-
 class BasicApiService {
   String? url;
 
   BasicApiService({this.url});
 
-  Future performGetRequest() async {
+  Future<dynamic> performGetRequest() async {
     http.Response response = await http.get(
       Uri.parse(url ?? ''),
     );
@@ -24,9 +22,12 @@ class BasicApiService {
 }
 
 class ApiWeatherService extends BasicApiService {
+  static const String apiKey = '74f903ea70161f3903e0a7dae7464d1e';
+  static const String openWeatherMapURL = 'https://api.openweathermap.org/data/2.5/weather';
+
   ApiWeatherService() : super();
 
-  Future fetchWeatherData() async {
+  Future<dynamic> fetchWeatherData() async {
     Location location = Location();
     await location.getCurrentLocation();
 
@@ -34,7 +35,7 @@ class ApiWeatherService extends BasicApiService {
       String long = location.longitude.toString();
       String lat = location.latitude.toString();
 
-      url = 'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$long&appid=$kApiKey&units=metric';
+      url = '$openWeatherMapURL?lat=$lat&lon=$long&appid=$apiKey&units=metric';
       return performGetRequest();
     } catch (e){
       print(e);

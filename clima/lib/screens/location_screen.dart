@@ -1,3 +1,4 @@
+import 'package:clima/services/networking.dart';
 import 'package:clima/services/weather.dart';
 import 'package:flutter/material.dart';
 import 'package:clima/utilities/constants.dart';
@@ -14,6 +15,8 @@ class LocationScreen extends StatefulWidget {
 
 class _LocationScreenState extends State<LocationScreen> {
   WeatherModel weatherModel = WeatherModel();
+  ApiWeatherService service = ApiWeatherService();
+
   int? _temperature;
   String? _weatherIcon;
   String? _message;
@@ -26,8 +29,8 @@ class _LocationScreenState extends State<LocationScreen> {
 
   void _updateUI({required dynamic weatherData}) {
     setState(() {
-      double temp = weatherData['main']['temp'];
-      _temperature = temp.toInt();
+      double? temp = weatherData['main']['temp'];
+      _temperature = (temp ?? 0).toInt();
 
       var condition = weatherData['weather'][0]['id'];
       _weatherIcon = weatherModel.getWeatherIcon(condition);
@@ -59,7 +62,10 @@ class _LocationScreenState extends State<LocationScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   FlatButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      var weatherData = await service.fetchWeatherData();
+                      _updateUI(weatherData: weatherData);
+                    },
                     child: Icon(
                       Icons.near_me,
                       size: 50.0,
