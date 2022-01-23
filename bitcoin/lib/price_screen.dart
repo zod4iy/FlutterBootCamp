@@ -10,36 +10,63 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
-  String _selectedCurrency = 'USD';
-  String _btcValue = '1 BTC = ? USD';
+  String _selectedCurrency = currenciesList.first;
+  String _btcValue = '1 BTC = ? ${currenciesList.first}';
+  String _ethValue = '1 ETH = ? ${currenciesList.first}';
+  String _ltcValue = '1 LTC = ? ${currenciesList.first}';
+
   CoinApiService apiService = CoinApiService();
 
   @override
   void initState() {
     super.initState();
 
-    _fetchInitialExchangeRates();
+    _fetchRates();
+  }
+  
+  Future<void> _fetchRates() async {
+    Future
+      .wait([
+        _fetchExchangeRateFor(coin: 'BTC'),
+        _fetchExchangeRateFor(coin: 'ETH'),
+        _fetchExchangeRateFor(coin: 'LTC'),
+      ])
+      .then((List responses) {
+        for (dynamic exchangeCoinData in responses) {
+          _updateCoinUI(exchangeCoinData);
+        }
+      })
+      .catchError((e) => print(e));
   }
 
-  void _fetchInitialExchangeRates() async {
-    var exchangeBTCData = await apiService.fetchExchangeRates(currency: _selectedCurrency, coinName: 'BTC');
-    _updateBTC(exchangeBTCData);
+  Future<void> _fetchExchangeRateFor({required String coin}) async {
+    var exchangeCoinData = await apiService.fetchExchangeRates(
+        currency: _selectedCurrency, coinName: coin);
+    _updateCoinUI(exchangeCoinData);
   }
 
-  void _updateBTC(dynamic data) {
+  void _updateCoinUI(dynamic data) {
     setState(() {
+      String coin = data['asset_id_base'];
       String currency = data['asset_id_quote'];
       double rate = data['rate'];
       int rateInteger = rate.toInt();
 
-      _btcValue = '1 BTC = $rateInteger $currency';
+      if (coin == 'BTC') {
+        _btcValue = '1 $coin = $rateInteger $currency';
+      } else if (coin == 'ETH') {
+        _ethValue = '1 $coin = $rateInteger $currency';
+      } else if (coin == 'LTC') {
+        _ltcValue = '1 $coin = $rateInteger $currency';
+      }
     });
   }
 
   DropdownButton<String> _buildMaterialPicker() {
     List<DropdownMenuItem<String>> itemsList = [];
     for (String currency in currenciesList) {
-      itemsList.add(DropdownMenuItem<String>(child: Text(currency), value: currency));
+      itemsList.add(
+          DropdownMenuItem<String>(child: Text(currency), value: currency));
     }
 
     return DropdownButton<String>(
@@ -48,6 +75,7 @@ class _PriceScreenState extends State<PriceScreen> {
       onChanged: (value) {
         setState(() {
           _selectedCurrency = value ?? 'USD';
+          _fetchRates();
         });
       },
     );
@@ -64,7 +92,8 @@ class _PriceScreenState extends State<PriceScreen> {
       itemExtent: 32.0,
       children: pickerItems,
       onSelectedItemChanged: (selectedIndex) {
-        print(selectedIndex);
+        _selectedCurrency = currenciesList[selectedIndex];
+        _fetchRates();
       },
     );
   }
@@ -81,23 +110,66 @@ class _PriceScreenState extends State<PriceScreen> {
         children: <Widget>[
           Padding(
             padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
-            child: Card(
-              color: Colors.lightBlueAccent,
-              elevation: 5.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-                child: Text(
-                  _btcValue,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.white,
+            child: Column(
+              children: [
+                Card(
+                  color: Colors.lightBlueAccent,
+                  elevation: 5.0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+                    child: Text(
+                      _btcValue,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                Card(
+                  color: Colors.lightBlueAccent,
+                  elevation: 5.0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+                    child: Text(
+                      _ethValue,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                Card(
+                  color: Colors.lightBlueAccent,
+                  elevation: 5.0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+                    child: Text(
+                      _ltcValue,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           Container(
@@ -105,11 +177,12 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: Platform.isIOS ? _buildCupertinoPicker() : _buildMaterialPicker(),
+            child: Platform.isIOS
+                ? _buildCupertinoPicker()
+                : _buildMaterialPicker(),
           ),
         ],
       ),
     );
   }
 }
-
