@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'coin_data.dart';
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -6,7 +9,43 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
-  String _selectedCurency = 'USD';
+  String _selectedCurrency = 'USD';
+
+  List<DropdownMenuItem<String>> _buildDropDownItems(List<String> currencies) {
+    List<DropdownMenuItem<String>> targetList = [];
+    for (String currency in currencies) {
+      targetList.add(DropdownMenuItem<String>(child: Text(currency), value: currency));
+    }
+    return targetList;
+  }
+
+  DropdownButton<String> buildMaterialPicker() {
+    return DropdownButton<String>(
+      value: _selectedCurrency,
+      items: _buildDropDownItems(currenciesList),
+      onChanged: (value) {
+        setState(() {
+          _selectedCurrency = value ?? 'USD';
+        });
+      },
+    );
+  }
+
+  CupertinoPicker buildCupertinoPicker(List<String> currencies) {
+    List<Widget> pickerItems = [];
+    for (String currency in currencies) {
+      pickerItems.add(Text(currency));
+    }
+
+    return CupertinoPicker(
+      backgroundColor: Colors.lightBlue,
+      itemExtent: 32.0,
+      children: pickerItems,
+      onSelectedItemChanged: (selectedIndex) {
+        print(selectedIndex);
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,22 +83,11 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: DropdownButton<String>(
-              value: _selectedCurency,
-              items: [
-                DropdownMenuItem(child: Text('USD'), value: 'USD',),
-                DropdownMenuItem(child: Text('EUR'), value: 'EUR',),
-                DropdownMenuItem(child: Text('GBP'), value: 'GBP',),
-              ],
-              onChanged: (value) {
-                setState(() {
-                  _selectedCurency = value ?? 'USD';
-                });
-              },
-            ),
+            child: buildCupertinoPicker(currenciesList),
           ),
         ],
       ),
     );
   }
 }
+
