@@ -41,4 +41,9 @@ class ApiWeatherService extends BasicApiService {
       print(e);
     }
   }
+
+  Future<dynamic> fetchWeatherFor({required String cityName}) async {
+    url = '$openWeatherMapURL?q=$cityName&appid=$apiKey&units=metric';
+    return performGetRequest();
+  }
 }
