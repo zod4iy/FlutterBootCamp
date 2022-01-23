@@ -11,18 +11,15 @@ class PriceScreen extends StatefulWidget {
 class _PriceScreenState extends State<PriceScreen> {
   String _selectedCurrency = 'USD';
 
-  List<DropdownMenuItem<String>> _buildDropDownItems(List<String> currencies) {
-    List<DropdownMenuItem<String>> targetList = [];
+  DropdownButton<String> buildMaterialPicker(List<String> currencies) {
+    List<DropdownMenuItem<String>> itemsList = [];
     for (String currency in currencies) {
-      targetList.add(DropdownMenuItem<String>(child: Text(currency), value: currency));
+      itemsList.add(DropdownMenuItem<String>(child: Text(currency), value: currency));
     }
-    return targetList;
-  }
 
-  DropdownButton<String> buildMaterialPicker() {
     return DropdownButton<String>(
       value: _selectedCurrency,
-      items: _buildDropDownItems(currenciesList),
+      items: itemsList,
       onChanged: (value) {
         setState(() {
           _selectedCurrency = value ?? 'USD';
