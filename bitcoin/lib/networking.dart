@@ -39,8 +39,10 @@ class BaseApiService implements ApiServiceProtocol  {
         var decodedData = jsonDecode(response.body);
         return decodedData;
       } else if (response.statusCode >= 400 && response.statusCode < 500) {
+        print(response.statusCode);
         throw Error.clientError;
       } else {
+        print(response.statusCode);
         throw Error.serverError;
       }
     } catch (e) {

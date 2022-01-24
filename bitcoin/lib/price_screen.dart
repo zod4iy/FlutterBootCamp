@@ -11,11 +11,10 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
   String _selectedCurrency = currenciesList.first;
-  String _btcValue = '1 BTC = ? ${currenciesList.first}';
-  String _ethValue = '1 ETH = ? ${currenciesList.first}';
-  String _ltcValue = '1 LTC = ? ${currenciesList.first}';
 
   CoinApiService apiService = CoinApiService();
+
+  CoinData coinData = CoinData();
 
   @override
   void initState() {
@@ -23,20 +22,17 @@ class _PriceScreenState extends State<PriceScreen> {
 
     _fetchRates();
   }
-  
+
   Future<void> _fetchRates() async {
-    Future
-      .wait([
-        _fetchExchangeRateFor(coin: 'BTC'),
-        _fetchExchangeRateFor(coin: 'ETH'),
-        _fetchExchangeRateFor(coin: 'LTC'),
-      ])
-      .then((List responses) {
-        for (dynamic exchangeCoinData in responses) {
-          _updateCoinUI(exchangeCoinData);
-        }
-      })
-      .catchError((e) => print(e));
+    Future.wait([
+      _fetchExchangeRateFor(coin: 'BTC'),
+      _fetchExchangeRateFor(coin: 'ETH'),
+      _fetchExchangeRateFor(coin: 'LTC'),
+    ]).then((List responses) {
+      for (dynamic exchangeCoinData in responses) {
+        _updateCoinUI(exchangeCoinData);
+      }
+    }).catchError((e) => print(e));
   }
 
   Future<void> _fetchExchangeRateFor({required String coin}) async {
@@ -52,13 +48,9 @@ class _PriceScreenState extends State<PriceScreen> {
       double rate = data['rate'];
       int rateInteger = rate.toInt();
 
-      if (coin == 'BTC') {
-        _btcValue = '1 $coin = $rateInteger $currency';
-      } else if (coin == 'ETH') {
-        _ethValue = '1 $coin = $rateInteger $currency';
-      } else if (coin == 'LTC') {
-        _ltcValue = '1 $coin = $rateInteger $currency';
-      }
+      coinData.coins[coin]?.currency = currency;
+      coinData.coins[coin]?.price = rateInteger.toString();
+      coinData.coins[coin]?.resultText = '1 $coin = $rateInteger $currency';
     });
   }
 
@@ -74,7 +66,7 @@ class _PriceScreenState extends State<PriceScreen> {
       items: itemsList,
       onChanged: (value) {
         setState(() {
-          _selectedCurrency = value ?? 'USD';
+          _selectedCurrency = value ?? currenciesList.first;
           _fetchRates();
         });
       },
@@ -98,6 +90,33 @@ class _PriceScreenState extends State<PriceScreen> {
     );
   }
 
+  List<Card> _buildCoinCards() {
+    List<Card> cards = [];
+    for (String crypto in cryptoList) {
+      cards.add(
+        Card(
+          color: Colors.lightBlueAccent,
+          elevation: 5.0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+            child: Text(
+              coinData.coins[crypto]?.resultText ?? '',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 20.0,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    return cards;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,65 +130,7 @@ class _PriceScreenState extends State<PriceScreen> {
           Padding(
             padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
             child: Column(
-              children: [
-                Card(
-                  color: Colors.lightBlueAccent,
-                  elevation: 5.0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-                    child: Text(
-                      _btcValue,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-                Card(
-                  color: Colors.lightBlueAccent,
-                  elevation: 5.0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-                    child: Text(
-                      _ethValue,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-                Card(
-                  color: Colors.lightBlueAccent,
-                  elevation: 5.0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-                    child: Text(
-                      _ltcValue,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              children: _buildCoinCards(),
             ),
           ),
           Container(
