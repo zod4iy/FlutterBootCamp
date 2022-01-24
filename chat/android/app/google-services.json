@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "857879328709",
+    "project_id": "chattestflutterapp",
+    "storage_bucket": "chattestflutterapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:857879328709:android:16aa08903c3e1bced13dac",
+        "android_client_info": {
+          "package_name": "com.alexandrkurylenko.chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "857879328709-3urbmiutgs78gbmpa93r9a2vnt4heghh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBePqKwBc0xPThYDJiQ6v3_EriqPlRcUAA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "857879328709-3urbmiutgs78gbmpa93r9a2vnt4heghh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
