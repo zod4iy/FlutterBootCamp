@@ -66,31 +66,7 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                stream: _firestore.collection('messages').snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    final messages = snapshot.data?.docs ?? [];
-                    List<Text> messageWidgets = [];
-                    for (var message in messages) {
-                      final messageText = message.data()['text'];
-                      final messageSender = message.data()['sender'];
-
-                      final messageWidget = Text('$messageText from $messageSender');
-                      messageWidgets.add(messageWidget);
-                    }
-                    return Column(
-                      children: messageWidgets,
-                    );
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        backgroundColor: Colors.lightBlueAccent,
-                      ),
-                    );
-                  }
-                },
-            ),
+            MessagesStream(),
             Container(
               decoration: kMessageContainerDecoration,
               child: Row(
@@ -122,6 +98,90 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class MessagesStream extends StatelessWidget {
+  final _firestore = FirebaseFirestore.instance;
+
+  MessagesStream({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+      stream: _firestore.collection('messages').snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final messages = snapshot.data?.docs ?? [];
+          List<MessageBubble> messageBubbles = [];
+          for (var message in messages) {
+            final messageText = message.data()['text'];
+            final messageSender = message.data()['sender'];
+
+            final messageBubble = MessageBubble(
+              text: messageText,
+              sender: messageSender,
+            );
+            messageBubbles.add(messageBubble);
+          }
+          return Expanded(
+            child: ListView(
+              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
+              children: messageBubbles,
+            ),
+          );
+        } else {
+          return Center(
+            child: CircularProgressIndicator(
+              backgroundColor: Colors.lightBlueAccent,
+            ),
+          );
+        }
+      },
+    );
+  }
+}
+
+
+class MessageBubble extends StatelessWidget {
+  final String text;
+  final String sender;
+
+  const MessageBubble({
+    Key? key,
+    required this.text,
+    required this.sender
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(
+            sender,
+            style: TextStyle(color: Colors.black54, fontSize: 12.0),
+          ),
+          Material(
+            borderRadius: BorderRadius.circular(30.0),
+            elevation: 5.0,
+            color: Colors.lightBlueAccent,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+              child: Text(
+                text,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
