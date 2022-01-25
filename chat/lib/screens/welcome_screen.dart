@@ -1,5 +1,6 @@
 import 'package:chat/screens/login_screen.dart';
 import 'package:chat/screens/registration_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:chat/components/rounded_button.dart';
@@ -18,6 +19,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
+
+    Firebase.initializeApp();
 
     animationController = AnimationController(
         duration: Duration(seconds: 1),
