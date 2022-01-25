@@ -27,7 +27,7 @@ class _ChatScreenState extends State<ChatScreen> {
     try {
       loggedInUser = _auth.currentUser;
       print(loggedInUser?.email ?? '');
-    } catch(e) {
+    } catch (e) {
       print(e);
     }
   }
@@ -67,7 +67,9 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            MessagesStream(),
+            MessagesStream(
+              loggedInUserEmail: loggedInUser?.email ?? '',
+            ),
             Container(
               decoration: kMessageContainerDecoration,
               child: Row(
@@ -107,9 +109,10 @@ class _ChatScreenState extends State<ChatScreen> {
 }
 
 class MessagesStream extends StatelessWidget {
+  final String loggedInUserEmail;
   final _firestore = FirebaseFirestore.instance;
 
-  MessagesStream({Key? key}) : super(key: key);
+  MessagesStream({Key? key, required this.loggedInUserEmail}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +120,7 @@ class MessagesStream extends StatelessWidget {
       stream: _firestore.collection('messages').snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          final messages = snapshot.data?.docs ?? [];
+          final messages = snapshot.data?.docs.reversed ?? [];
           List<MessageBubble> messageBubbles = [];
           for (var message in messages) {
             final messageText = message.data()['text'];
@@ -126,11 +129,13 @@ class MessagesStream extends StatelessWidget {
             final messageBubble = MessageBubble(
               text: messageText,
               sender: messageSender,
+              isMe: loggedInUserEmail == messageSender,
             );
             messageBubbles.add(messageBubble);
           }
           return Expanded(
             child: ListView(
+              reverse: true,
               padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
               children: messageBubbles,
             ),
@@ -147,15 +152,16 @@ class MessagesStream extends StatelessWidget {
   }
 }
 
-
 class MessageBubble extends StatelessWidget {
   final String text;
   final String sender;
+  final bool isMe;
 
   const MessageBubble({
     Key? key,
     required this.text,
-    required this.sender
+    required this.sender,
+    required this.isMe,
   }) : super(key: key);
 
   @override
@@ -163,22 +169,34 @@ class MessageBubble extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment:
+            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
           Text(
             sender,
             style: TextStyle(color: Colors.black54, fontSize: 12.0),
           ),
           Material(
-            borderRadius: BorderRadius.circular(30.0),
+            borderRadius: isMe
+                ? BorderRadius.only(
+                    topLeft: Radius.circular(30.0),
+                    bottomLeft: Radius.circular(30.0),
+                    bottomRight: Radius.circular(30.0),
+                  )
+                : BorderRadius.only(
+                    topRight: Radius.circular(30.0),
+                    bottomLeft: Radius.circular(30.0),
+                    bottomRight: Radius.circular(30.0),
+                  ),
             elevation: 5.0,
-            color: Colors.lightBlueAccent,
+            color: isMe ? Colors.lightBlueAccent : Colors.white,
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
               child: Text(
                 text,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: isMe ? Colors.white : Colors.black54,
                   fontSize: 16.0,
                 ),
               ),
