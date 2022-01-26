@@ -1,24 +1,29 @@
+import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:todo/models/task.dart';
 
 class TasksData extends ChangeNotifier {
-  List<Task> tasks = [
+  List<Task> _tasks = [
     Task(name: 'Buy milk'),
     Task(name: 'Buy eggs'),
     Task(name: 'Buy bread'),
   ];
 
+  UnmodifiableListView<Task> get tasks {
+    return UnmodifiableListView(_tasks);
+  }
+
   int get tasksCount {
-    return tasks.length;
+    return _tasks.length;
   }
 
   void addTask({required Task task}) {
-    tasks.add(task);
+    _tasks.add(task);
     notifyListeners();
   }
 
   void toggleTask({required int index}) {
-    tasks[index].toggleDone();
+    _tasks[index].toggleDone();
     notifyListeners();
   }
 }
