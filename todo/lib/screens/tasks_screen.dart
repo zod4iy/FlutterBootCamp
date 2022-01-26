@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:todo/widgets/tasks_list.dart';
 
 class TasksScreen extends StatelessWidget {
-  const TasksScreen({Key? key}) : super(key: key);
+  TasksScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +56,7 @@ class TasksScreen extends StatelessWidget {
           ),
           Expanded(
             child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20.0),
               decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
@@ -62,6 +64,7 @@ class TasksScreen extends StatelessWidget {
                     topRight: Radius.circular(20.0),
                   )
               ),
+              child: TasksList(),
             ),
           )
         ],
